@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import acmeLogo from "../assets/logo-acme.png";
 import apexLogo from "../assets/logo-apex.png";
 import celestialLogo from "../assets/logo-celestial.png";
@@ -15,7 +16,18 @@ export const LogoTicker = () => {
           </div>
           <div className="flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]">
             <div className="flex flex-none gap-14">
-              {[acmeLogo, apexLogo, celestialLogo, echoLogo, pulseLogo, quantumLogo].map((logo) => (<img src={logo.src} key={logo.src} className="h-6 w-auto" />))}
+              {[acmeLogo, apexLogo, celestialLogo, echoLogo, pulseLogo, quantumLogo].map((logo, index) => (
+                <Image
+                  src={logo.src}
+                  key={index}
+                  alt={`company logo`}
+                  className="h-6 w-auto"
+                  width={100}
+                  height={24} 
+                  quality={90} 
+                  priority={index === 0}
+                />
+              ))}
             </div>
           </div>
         </div>
