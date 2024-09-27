@@ -1,8 +1,8 @@
 "use client";
 
-import { DotLottiePlayer } from "@dotlottie/react-player";
-import Image from "next/image";
+import { DotLottieCommonPlayer, DotLottiePlayer } from "@dotlottie/react-player";
 import productImage from "../assets/product-image.png";
+import { useRef } from "react";
 
 const tabs = [
   {
@@ -31,6 +31,24 @@ const tabs = [
   },
 ];
 
+const FeatureTab = (tab: typeof tabs[number]) => {
+  const dotLottieRef = useRef<DotLottieCommonPlayer>(null);
+  const handleTabHover = () => {
+    if (dotLottieRef.current === null) return;
+    dotLottieRef.current.seek(0);
+    dotLottieRef.current.play();
+  };
+  return (
+    <div onMouseEnter={handleTabHover} className="border border-white/15 flex p-2.5 rounded-xl gap-2.5 items-center lg:flex-1">
+      <div className="w-12 h-12 border border-white/15 rounded-lg inline-flex items-center justify-center">
+        <DotLottiePlayer ref={dotLottieRef} src={tab.icon} className="w-5 h-5" autoplay />
+      </div>
+      <div className="font-medium">{tab.title}</div>
+      {tab.isNew && <div className="text-xs rounded-full px-2 py-0.5 bg-[#8C44FF] text-black font-semibold">New</div>}
+    </div>
+  )
+}
+
 export const Features = () => {
   return (
     <section className="py-20 md:py-24">
@@ -43,13 +61,7 @@ export const Features = () => {
         </p>
         <div className="mt-10 flex flex-col lg:flex-row gap-3">
           {tabs.map(tab => (
-            <div key={tab.title} className="border border-white/15 flex p-2.5 rounded-xl gap-2.5 items-center lg:flex-1">
-              <div className="w-12 h-12 border border-white/15 rounded-lg inline-flex items-center justify-center">
-                <DotLottiePlayer src={tab.icon} className="w-5 h-5" autoplay />
-              </div>
-              <div className="font-medium">{tab.title}</div>
-              {tab.isNew && <div className="text-xs rounded-full px-2 py-0.5 bg-[#8C44FF] text-black font-semibold">New</div>}
-            </div>
+            <FeatureTab key={tab.title} {...tab} />
           ))}
         </div>
         <div className="border border-white/20 p-2.5 rounded-xl mt-3">
