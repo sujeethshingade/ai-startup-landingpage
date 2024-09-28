@@ -2,7 +2,7 @@
 
 import { DotLottieCommonPlayer, DotLottiePlayer } from "@dotlottie/react-player";
 import productImage from "../assets/product-image.png";
-import { ComponentPropsWithoutRef, useEffect, useRef, useState } from "react";
+import { ComponentPropsWithoutRef, use, useEffect, useRef, useState } from "react";
 import { animate, motion, useMotionTemplate, useMotionValue, ValueAnimationTransition } from "framer-motion";
 
 const tabs = [
@@ -68,13 +68,18 @@ function FeatureTab(props: typeof tabs[number] & ComponentPropsWithoutRef<'div'>
       onClick={props.onClick}
       className="border border-white/15 flex p-2.5 rounded-xl gap-2.5 items-center lg:flex-1 relative">
       {props.selected && (
-          <motion.div style={{
+        <motion.div
+          style={{
             maskImage,
           }}
-            className="absolute -m-px inset-0 border border-[#A369FF] rounded-xl"></motion.div>
-        )}
+          className="absolute -m-px inset-0 border border-[#A369FF] rounded-xl"></motion.div>
+      )}
       <div className="w-12 h-12 border border-white/15 rounded-lg inline-flex items-center justify-center">
-        <DotLottiePlayer ref={dotLottieRef} src={props.icon} className="w-5 h-5" autoplay />
+        <DotLottiePlayer 
+        ref={dotLottieRef} 
+        src={props.icon} 
+        className="w-5 h-5" 
+        autoplay />
       </div>
       <div className="font-medium">{props.title}</div>
       {props.isNew && <div className="text-xs rounded-full px-2 py-0.5 bg-[#8C44FF] text-black font-semibold">New</div>}
@@ -84,6 +89,19 @@ function FeatureTab(props: typeof tabs[number] & ComponentPropsWithoutRef<'div'>
 
 export const Features = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const backgroundPositionX = useMotionValue(tabs[0].backgroundPositionX);
+  const backgroundPositionY = useMotionValue(tabs[0].backgroundPositionY);
+  const backgroundSizeX = useMotionValue(tabs[0].backgroundSizeX);
+  const backgroundPosition = useMotionTemplate`${backgroundPositionX}% ${backgroundPositionY}%`;
+  const backgroundSize = useMotionTemplate`${backgroundSizeX}% auto`;
+
+  const handleSelectTab = (index: number) => {
+    setSelectedTab(index);
+    animate(backgroundSizeX, [backgroundSizeX.get(), 100, tabs[index].backgroundSizeX], { duration: 2, ease: "easeInOut" });
+    animate(backgroundPositionX, [backgroundPositionX.get(), tabs[index].backgroundPositionX], { duration: 2, ease: "easeInOut" });
+    animate(backgroundPositionY, [backgroundPositionY.get(), tabs[index].backgroundPositionY], { duration: 2, ease: "easeInOut" });
+  };
+
   return (
     <section className="py-20 md:py-24">
       <div className="container">
@@ -97,14 +115,18 @@ export const Features = () => {
           {tabs.map((tab, tabIndex) => (
             <FeatureTab
               key={tab.title} {...tab}
-              onClick={() => setSelectedTab(tabIndex)}
+              onClick={() => handleSelectTab(tabIndex)}
               selected={selectedTab === tabIndex} />
           ))}
         </div>
         <div className="border border-white/20 p-2.5 rounded-xl mt-3">
-          <div className="aspect-video bg-cover border border-white/20 rounded-lg" style={{
-            backgroundImage: `url(${productImage.src})`,
-          }}></div>
+          <motion.div className="aspect-video bg-cover border border-white/20 rounded-lg"
+            style={{
+              backgroundPosition,
+              backgroundSize,
+              backgroundImage: `url(${productImage.src})`,
+            }}>
+          </motion.div>
         </div>
       </div>
     </section>
